@@ -39,9 +39,13 @@ SERVER_JAR_PATH = os.path.abspath(os.path.join(f"./{DIR}", SERVER_JAR_NAME))
 SERVER_EULA_PATH = os.path.abspath(os.path.join(f"./{DIR}", "eula.txt"))
 SERVER_PLUGIN_PATH = os.path.abspath(os.path.join(f"./{DIR}/plugins", SERVER_JAR_NAME))
 ALLOW_OVER_RESTART = False
+# DEFAULT_PLUGINS = True
 ##########    TODO LIST    ##########
 # JVM AutoInstall and using as JAVA_PATH
+# Default Plugins
 # VERY CUTTY KAWAII CAT
+##########  KNOWN  ISSUES  ##########
+# Do not wait for Eula input at first start
 #####################################
 
 
@@ -102,6 +106,7 @@ if SERVER_JAR_NAME in os.listdir(f"./{DIR}"):
 if "eula.txt" in os.listdir(f"./{DIR}"):
     with open(SERVER_EULA_PATH, "r") as file:
         eula_txt = "".join(file.readlines()).split("\n")
+        file.close()
         if "eula=true" in eula_txt:
             print("eula=true - pass")
             pass
@@ -109,15 +114,15 @@ if "eula.txt" in os.listdir(f"./{DIR}"):
             yes_words = ["yes", "y", "yeah", "agree", "ye", "ok", "sure"]
 
             print("^==========[EULA SECTION]==========^")
-            eula_agree = input("Do you agree with Mojang's Eula? : ")
-
-            if not eula_agree in yes_words:
-                exit("If you do not agree to Mojang's Eula, you cannot start the server. :)")
             
-            with open(SERVER_EULA_PATH, "w") as eula:
-                eula.write("eula=true")
+            if not input("Do you agree with Mojang's Eula? : ") in yes_words:
+                exit("If you do not agree to Mojang's Eula, you cannot start the server. :)")
+            else:
+                with open(SERVER_EULA_PATH, "w") as eula:
+                    eula.write("eula=true")
+                    eula.close()
 
-            print("Eula Agreed. Starting Server...")
+                print("Eula Agreed. Starting Server...")
 
 # flattening args
 jvm_custom_args = ""
