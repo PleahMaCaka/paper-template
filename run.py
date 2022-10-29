@@ -124,25 +124,14 @@ if "eula.txt" in os.listdir(f"./{DIR}"):
 
                 print("Eula Agreed. Starting Server...")
 
-# flattening args
-jvm_custom_args = ""
-for s in JVM_ARGS:
-    jvm_custom_args += s + ""
-jvm_custom_args += " "
-
-jar_custom_args = ""
-for s in JAR_ARGS:
-    jar_custom_args += s + ""
-jar_custom_args += " "
-
-
+# start fun
 def start():
     return os.system(
         f"cd {SERVER_PATH} && "
         + f"{JAVA_PATH} -Xms{MEMORY}G -Xmx{MEMORY}G "
-        + jvm_custom_args
+        + " ".join(JVM_ARGS)
         + f"-jar {SERVER_JAR_PATH} "
-        + jar_custom_args
+        + " ".join(JAR_ARGS)
     )
 
 # ^----------[ START ]----------^ #
