@@ -1,7 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from math import trunc
 import os
+from time import sleep, time
 
 try:
     import requests
@@ -15,7 +17,7 @@ except ImportError:
 DIR = ".server"
 MEMORY = 4
 PORT = 25565
-JAVA = "java" # java bin path
+JAVA_PATH = "java" # java bin path
 DEBUG_PORT = 5005 # ref: https://www.spigotmc.org/wiki/intellij-debug-your-plugin/
 # DEFAULT_PLUGINS=[
 #     "",
@@ -29,26 +31,44 @@ JAR_ARGS = [
     "--nogui" # '--nogui' and 'nogui' both work
     # "add here"
 ]
+AUTO_START = True
 ##########   STATIC INFO   ##########
 SERVER_JAR_NAME="paper-server.jar"
 SERVER_PATH = os.path.join(f"./{DIR}")
 SERVER_JAR_PATH = os.path.abspath(os.path.join(f"./{DIR}", SERVER_JAR_NAME))
 SERVER_EULA_PATH = os.path.abspath(os.path.join(f"./{DIR}", "eula.txt"))
 SERVER_PLUGIN_PATH = os.path.abspath(os.path.join(f"./{DIR}/plugins", SERVER_JAR_NAME))
+ALLOW_OVER_RESTART = False
+##########    TODO LIST    ##########
+# JVM AutoInstall and using as JAVA_PATH
+# VERY CUTTY KAWAII CAT
 #####################################
 
 
-if not "build.gradle.kts" in os.listdir():
-    exit("!! The script should be run from the same location as [build.gradle or build.gradle.kts]")
-else:
-    print("^----------[ STARTING SERVER ]----------^")
+files_for_location_check = ["build.gradle", "build.gradle.kts"]
+check_count = 0
+found = False
 
+for f in files_for_location_check:
+    if found: break
+    # file found
+    if f in os.listdir("./"):
+        found = True
+    # file not found
+    else:
+        check_count = check_count + 1
+        if check_count == len(files_for_location_check):
+            exit(f"!! The script should be run from the same location as {files_for_location_check}")
+        pass
+        
+
+print("^----------[ READY SERVER ]----------^")
 # check server dir
 if not os.path.exists(DIR):
     os.mkdir("./.server")
     print(f"Server DIR ({DIR}) not found - create")
 else:
-    print(f"Server DIR ({DIR}) found. - pass")
+    print(f"Server DIR ({DIR}) found - pass")
 
 # check jar
 if not SERVER_JAR_NAME in os.listdir(f"./{DIR}"):
@@ -75,14 +95,13 @@ if not SERVER_JAR_NAME in os.listdir(f"./{DIR}"):
 
 # server jar check again
 if SERVER_JAR_NAME in os.listdir(f"./{DIR}"):
-    print("Paper found. - Starting Server...")
+    print("Paper found - pass")
 
 
 # eula check
 if "eula.txt" in os.listdir(f"./{DIR}"):
     with open(SERVER_EULA_PATH, "r") as file:
         eula_txt = "".join(file.readlines()).split("\n")
-        print(eula_txt)
         if "eula=true" in eula_txt:
             print("eula=true - pass")
             pass
@@ -112,13 +131,29 @@ for s in JAR_ARGS:
 jar_custom_args += " "
 
 
-# ^----------[ START ]----------^ #
-start_code = os.system(
-    f"cd {SERVER_PATH} && "
-    + f"{JAVA} -Xms{MEMORY}G -Xmx{MEMORY}G "
-    + jvm_custom_args
-    + f"-jar {SERVER_JAR_PATH} "
-    + jar_custom_args
-)
+def start():
+    return os.system(
+        f"cd {SERVER_PATH} && "
+        + f"{JAVA_PATH} -Xms{MEMORY}G -Xmx{MEMORY}G "
+        + jvm_custom_args
+        + f"-jar {SERVER_JAR_PATH} "
+        + jar_custom_args
+    )
 
-print(start_code)
+# ^----------[ START ]----------^ #
+if not AUTO_START:
+    exit(f"Server Stopped. ({start()})")
+else:
+    stack = 0
+    while AUTO_START:
+        sleep(2)
+        stack = stack + 1
+        last_time = trunc(time())
+        print(f"PMC :: Starting Server.. - [Stack: {stack}]")
+        code = start()
+        print(f"PMC :: Server Stopped. [Code: {code}]")
+        if code != 0:
+            exit("Exit code is not \'0\'. - exit")
+        elif (last_time + 5) > trunc(time()):
+            if ALLOW_OVER_RESTART: pass
+            else: exit("The server restarts too quickly. - exit")
