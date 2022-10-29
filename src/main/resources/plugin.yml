@@ -1,0 +1,7 @@
+name: ExamplePlugin
+version: '${version}'
+main: example.ExamplePlugin
+api-version: 1.19
+libraries:
+  - org.jetbrains.kotlin:kotlin-stdlib:1.7.20
+  - org.jetbrains.kotlin:kotlin-reflect:1.7.20
