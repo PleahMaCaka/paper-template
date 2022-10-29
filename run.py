@@ -1,10 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from fileinput import close
 import os
-from tracemalloc import start
-from urllib import request
 
 try:
     import requests
@@ -42,8 +39,7 @@ SERVER_PLUGIN_PATH = os.path.abspath(os.path.join(f"./{DIR}/plugins", SERVER_JAR
 
 
 if not "build.gradle.kts" in os.listdir():
-    print("!! The script should be run from the same location as [build.gradle or build.gradle.kts]")
-    exit(1)
+    exit("!! The script should be run from the same location as [build.gradle or build.gradle.kts]")
 else:
     print("^----------[ STARTING SERVER ]----------^")
 
@@ -61,9 +57,9 @@ if not SERVER_JAR_NAME in os.listdir(f"./{DIR}"):
 
     # paper sad
     if paper_version_res.status_code != 200:
-        print("Can't fetch paper build, Please install manually")
-        exit(1)
-    # paper
+        exit("Can't fetch paper build, Please install manually")
+
+    # paper happy
     else:
         paper_build = json.loads(paper_version_res.content)['builds'][-1]
         print(f"Paper Version: {paper_build}")
@@ -77,15 +73,32 @@ if not SERVER_JAR_NAME in os.listdir(f"./{DIR}"):
 
         print("Complete!")
 
-# check again
+# server jar check again
 if SERVER_JAR_NAME in os.listdir(f"./{DIR}"):
     print("Paper found. - Starting Server...")
 
+
+# eula check
 if "eula.txt" in os.listdir(f"./{DIR}"):
     with open(SERVER_EULA_PATH, "r") as file:
-        print(file.readlines())
+        eula_txt = "".join(file.readlines()).split("\n")
+        print(eula_txt)
+        if "eula=true" in eula_txt:
+            print("eula=true - pass")
+            pass
+        else:
+            yes_words = ["yes", "y", "yeah", "agree", "ye", "ok", "sure"]
 
-        print("eula found")
+            print("^==========[EULA SECTION]==========^")
+            eula_agree = input("Do you agree with Mojang's Eula? : ")
+
+            if not eula_agree in yes_words:
+                exit("If you do not agree to Mojang's Eula, you cannot start the server. :)")
+            
+            with open(SERVER_EULA_PATH, "w") as eula:
+                eula.write("eula=true")
+
+            print("Eula Agreed. Starting Server...")
 
 # flattening args
 jvm_custom_args = ""
