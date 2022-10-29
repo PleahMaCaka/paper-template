@@ -35,8 +35,10 @@ AUTO_START = True
 ##########   STATIC INFO   ##########
 SERVER_JAR_NAME="paper-server.jar"
 SERVER_PATH = os.path.join(f"./{DIR}")
+PROPERTIES_AUTO_DOWNLOAD = False
 SERVER_JAR_PATH = os.path.abspath(os.path.join(f"./{DIR}", SERVER_JAR_NAME))
 SERVER_EULA_PATH = os.path.abspath(os.path.join(f"./{DIR}", "eula.txt"))
+SERVER_PROPERTIES_PATH = os.path.abspath(os.path.join(f"./{DIR}", "server.properties"))
 SERVER_PLUGIN_PATH = os.path.abspath(os.path.join(f"./{DIR}/plugins", SERVER_JAR_NAME))
 ALLOW_OVER_RESTART = False
 # DEFAULT_PLUGINS = True
@@ -45,7 +47,7 @@ ALLOW_OVER_RESTART = False
 # Default Plugins
 # VERY CUTTY KAWAII CAT
 ##########  KNOWN  ISSUES  ##########
-# Do not wait for Eula input at first start
+# WE DON'T HAVE CAT
 #####################################
 
 
@@ -99,10 +101,19 @@ if not SERVER_JAR_NAME in os.listdir(f"./{DIR}"):
 
 # server jar check again
 if SERVER_JAR_NAME in os.listdir(f"./{DIR}"):
-    print("Paper found - pass")
+    print("Paper found")
 
 
 # eula check
+if not "eula.txt" in os.listdir(f"./{DIR}"):
+    try:
+        with open(SERVER_EULA_PATH, "r") as file:
+            file.readlines()
+            file.close()
+    except FileNotFoundError:
+        with open(SERVER_EULA_PATH, "w"):
+            pass
+
 if "eula.txt" in os.listdir(f"./{DIR}"):
     with open(SERVER_EULA_PATH, "r") as file:
         eula_txt = "".join(file.readlines()).split("\n")
@@ -113,16 +124,29 @@ if "eula.txt" in os.listdir(f"./{DIR}"):
         else:
             yes_words = ["yes", "y", "yeah", "agree", "ye", "ok", "sure"]
 
-            print("^==========[EULA SECTION]==========^")
+            print("^----------[ EULA SECTION ]----------^")
             
             if not input("Do you agree with Mojang's Eula? : ") in yes_words:
-                exit("If you do not agree to Mojang's Eula, you cannot start the server. :)")
+                exit("If you do not agree to Mojang's Eula, can't start the server. :)")
             else:
                 with open(SERVER_EULA_PATH, "w") as eula:
                     eula.write("eula=true")
                     eula.close()
 
                 print("Eula Agreed. Starting Server...")
+
+# properties
+if not "server.properties" in os.listdir(f"./{DIR}"):
+    if not PROPERTIES_AUTO_DOWNLOAD: pass
+    with open(SERVER_PROPERTIES_PATH, "w") as file:
+        properties = requests.get("https://server.properties/")
+        if properties.status_code != 200: 
+            print("Couldn't find server.properties, tried to download it but failed. Run by default.")
+            file.close()
+            pass
+        file.write(properties.content.decode('utf-8'))
+        file.close()
+        print("server.properties not found. - generated")
 
 # start fun
 def start():
