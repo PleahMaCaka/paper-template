@@ -154,7 +154,7 @@ def start():
         f"cd {SERVER_PATH} && "
         + f"{JAVA_PATH} -Xms{MEMORY}G -Xmx{MEMORY}G "
         + " ".join(JVM_ARGS)
-        + f"-jar {SERVER_JAR_PATH} "
+        + f" -jar {SERVER_JAR_PATH} "
         + " ".join(JAR_ARGS)
     )
 
