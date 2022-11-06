@@ -17,29 +17,30 @@ except ImportError:
 DIR = ".server"
 MEMORY = 4
 PORT = 25565
-JAVA_PATH = "java" # java bin path
-DEBUG_PORT = 5005 # ref: https://www.spigotmc.org/wiki/intellij-debug-your-plugin/
-# DEFAULT_PLUGINS=[
-#     "",
-#     TODO make this
-# ]
+JAVA_PATH = "java"  # java bin path
+DEBUG_PORT = 5005  # ref: https://www.spigotmc.org/wiki/intellij-debug-your-plugin/
+DEFAULT_PLUGINS = [
+    ""
+]
 JVM_ARGS = [
     # "add here"
 ]
 JAR_ARGS = [
     # "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005", # ref: https://www.spigotmc.org/wiki/intellij-debug-your-plugin/
-    "--nogui" # '--nogui' and 'nogui' both work
+    "--nogui"  # '--nogui' and 'nogui' both work
     # "add here"
 ]
 AUTO_START = True
 ##########   STATIC INFO   ##########
-SERVER_JAR_NAME="paper-server.jar"
+SERVER_JAR_NAME = "paper-server.jar"
 SERVER_PATH = os.path.join(f"./{DIR}")
 PROPERTIES_AUTO_DOWNLOAD = False
 SERVER_JAR_PATH = os.path.abspath(os.path.join(f"./{DIR}", SERVER_JAR_NAME))
 SERVER_EULA_PATH = os.path.abspath(os.path.join(f"./{DIR}", "eula.txt"))
-SERVER_PROPERTIES_PATH = os.path.abspath(os.path.join(f"./{DIR}", "server.properties"))
-SERVER_PLUGIN_PATH = os.path.abspath(os.path.join(f"./{DIR}/plugins", SERVER_JAR_NAME))
+SERVER_PROPERTIES_PATH = os.path.abspath(
+    os.path.join(f"./{DIR}", "server.properties"))
+SERVER_PLUGIN_PATH = os.path.abspath(
+    os.path.join(f"./{DIR}/plugins", SERVER_JAR_NAME))
 ALLOW_OVER_RESTART = False
 # DEFAULT_PLUGINS = True
 ##########    TODO LIST    ##########
@@ -56,7 +57,8 @@ check_count = 0
 found = False
 
 for f in files_for_location_check:
-    if found: break
+    if found:
+        break
     # file found
     if f in os.listdir("./"):
         found = True
@@ -64,9 +66,10 @@ for f in files_for_location_check:
     else:
         check_count = check_count + 1
         if check_count == len(files_for_location_check):
-            exit(f"!! The script should be run from the same location as {files_for_location_check}")
+            exit(
+                f"!! The script should be run from the same location as {files_for_location_check}")
         pass
-        
+
 
 print("^----------[ READY SERVER ]----------^")
 # check server dir
@@ -79,7 +82,8 @@ else:
 # check jar
 if not SERVER_JAR_NAME in os.listdir(f"./{DIR}"):
     # request paper version info
-    paper_version_res = requests.get("https://api.papermc.io/v2/projects/paper/versions/1.19.2/")
+    paper_version_res = requests.get(
+        "https://api.papermc.io/v2/projects/paper/versions/1.19.2/")
 
     # paper sad
     if paper_version_res.status_code != 200:
@@ -93,7 +97,8 @@ if not SERVER_JAR_NAME in os.listdir(f"./{DIR}"):
         print("Donwloading...")
 
         with open(SERVER_JAR_PATH, "wb") as file:
-            res = requests.get(f"https://api.papermc.io/v2/projects/paper/versions/1.19.2/builds/{paper_build}/downloads/paper-1.19.2-{paper_build}.jar")
+            res = requests.get(
+                f"https://api.papermc.io/v2/projects/paper/versions/1.19.2/builds/{paper_build}/downloads/paper-1.19.2-{paper_build}.jar")
             file.write(res.content)
             file.close()
 
@@ -125,7 +130,7 @@ if "eula.txt" in os.listdir(f"./{DIR}"):
             yes_words = ["yes", "y", "yeah", "agree", "ye", "ok", "sure"]
 
             print("^----------[ EULA SECTION ]----------^")
-            
+
             if not input("Do you agree with Mojang's Eula? : ") in yes_words:
                 exit("If you do not agree to Mojang's Eula, can't start the server. :)")
             else:
@@ -137,11 +142,13 @@ if "eula.txt" in os.listdir(f"./{DIR}"):
 
 # properties
 if not "server.properties" in os.listdir(f"./{DIR}"):
-    if not PROPERTIES_AUTO_DOWNLOAD: pass
+    if not PROPERTIES_AUTO_DOWNLOAD:
+        pass
     with open(SERVER_PROPERTIES_PATH, "w") as file:
         properties = requests.get("https://server.properties/")
-        if properties.status_code != 200: 
-            print("Couldn't find server.properties, tried to download it but failed. Run by default.")
+        if properties.status_code != 200:
+            print(
+                "Couldn't find server.properties, tried to download it but failed. Run by default.")
             file.close()
             pass
         file.write(properties.content.decode('utf-8'))
@@ -149,6 +156,8 @@ if not "server.properties" in os.listdir(f"./{DIR}"):
         print("server.properties not found. - generated")
 
 # start fun
+
+
 def start():
     return os.system(
         f"cd {SERVER_PATH} && "
@@ -157,6 +166,7 @@ def start():
         + f" -jar {SERVER_JAR_PATH} "
         + " ".join(JAR_ARGS)
     )
+
 
 # ^----------[ START ]----------^ #
 if not AUTO_START:
@@ -173,5 +183,7 @@ else:
         if code != 0:
             exit("Exit code is not \'0\'. - exit")
         elif (last_time + 5) > trunc(time()):
-            if ALLOW_OVER_RESTART: pass
-            else: exit("The server restarts too quickly. - exit")
+            if ALLOW_OVER_RESTART:
+                pass
+            else:
+                exit("The server restarts too quickly. - exit")
