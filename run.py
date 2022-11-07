@@ -23,12 +23,10 @@ DEFAULT_PLUGINS = [
     ""
 ]
 JVM_ARGS = [
-    # "add here"
+    # "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005", # ref: https://www.spigotmc.org/wiki/intellij-debug-your-plugin/
 ]
 JAR_ARGS = [
-    # "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005", # ref: https://www.spigotmc.org/wiki/intellij-debug-your-plugin/
-    "--nogui"  # '--nogui' and 'nogui' both work
-    # "add here"
+    "--nogui"
 ]
 AUTO_START = True
 ##########   STATIC INFO   ##########
