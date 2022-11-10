@@ -7,8 +7,10 @@ from time import sleep, time
 
 try:
     import requests
+    print(requests.get())
     import json
-except ImportError:
+except ImportError or NameError:
+    os.system("python -m pip install --upgrade pip")
     os.system("pip install requests json")
     print("retry!")
 
@@ -23,7 +25,8 @@ DEFAULT_PLUGINS = [
     ""
 ]
 JVM_ARGS = [
-    # "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005", # ref: https://www.spigotmc.org/wiki/intellij-debug-your-plugin/
+    # ref: https://www.spigotmc.org/wiki/intellij-debug-your-plugin/
+    "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005",
 ]
 JAR_ARGS = [
     "--nogui"
@@ -42,7 +45,7 @@ SERVER_PLUGIN_PATH = os.path.abspath(
 ALLOW_OVER_RESTART = False
 # DEFAULT_PLUGINS = True
 ##########    TODO LIST    ##########
-# JVM AutoInstall and using as JAVA_PATH
+# JVM auto install and using as JAVA_PATH
 # Default Plugins
 # VERY CUTTY KAWAII CAT
 ##########  KNOWN  ISSUES  ##########
@@ -72,14 +75,13 @@ for f in files_for_location_check:
 print("^----------[ READY SERVER ]----------^")
 # check server dir
 if not os.path.exists(DIR):
-    os.mkdir("./.server")
-    print(f"Server DIR ({DIR}) not found - create")
+    os.mkdir(f"./{DIR}")
+    print(f"Server directory ({DIR}) not found - generate")
 else:
-    print(f"Server DIR ({DIR}) found - pass")
+    print(f"Server directory ({DIR}) found - pass")
 
 # check jar
 if not SERVER_JAR_NAME in os.listdir(f"./{DIR}"):
-    # request paper version info
     paper_version_res = requests.get(
         "https://api.papermc.io/v2/projects/paper/versions/1.19.2/")
 
@@ -98,7 +100,6 @@ if not SERVER_JAR_NAME in os.listdir(f"./{DIR}"):
             res = requests.get(
                 f"https://api.papermc.io/v2/projects/paper/versions/1.19.2/builds/{paper_build}/downloads/paper-1.19.2-{paper_build}.jar")
             file.write(res.content)
-            file.close()
 
         print("Complete!")
 
@@ -112,7 +113,6 @@ if not "eula.txt" in os.listdir(f"./{DIR}"):
     try:
         with open(SERVER_EULA_PATH, "r") as file:
             file.readlines()
-            file.close()
     except FileNotFoundError:
         with open(SERVER_EULA_PATH, "w"):
             pass
@@ -120,12 +120,11 @@ if not "eula.txt" in os.listdir(f"./{DIR}"):
 if "eula.txt" in os.listdir(f"./{DIR}"):
     with open(SERVER_EULA_PATH, "r") as file:
         eula_txt = "".join(file.readlines()).split("\n")
-        file.close()
+
         if "eula=true" in eula_txt:
             print("eula=true - pass")
-            pass
         else:
-            yes_words = ["yes", "y", "yeah", "agree", "ye", "ok", "sure"]
+            yes_words = ["yes", "y", "yeah", "agree", "ye", "ok", "sure", "si"]
 
             print("^----------[ EULA SECTION ]----------^")
 
@@ -134,8 +133,6 @@ if "eula.txt" in os.listdir(f"./{DIR}"):
             else:
                 with open(SERVER_EULA_PATH, "w") as eula:
                     eula.write("eula=true")
-                    eula.close()
-
                 print("Eula Agreed. Starting Server...")
 
 # properties
@@ -147,15 +144,12 @@ if not "server.properties" in os.listdir(f"./{DIR}"):
         if properties.status_code != 200:
             print(
                 "Couldn't find server.properties, tried to download it but failed. Run by default.")
-            file.close()
             pass
         file.write(properties.content.decode('utf-8'))
-        file.close()
+        
         print("server.properties not found. - generated")
 
 # start fun
-
-
 def start():
     return os.system(
         f"cd {SERVER_PATH} && "
