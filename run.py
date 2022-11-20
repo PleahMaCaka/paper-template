@@ -7,7 +7,6 @@ from time import sleep, time
 
 try:
     import requests
-    print(requests.get())
     import json
 except ImportError or NameError:
     os.system("python -m pip install --upgrade pip")
