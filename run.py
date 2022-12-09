@@ -1,8 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from math import trunc
 import os
+from math import trunc
 from time import sleep, time
 
 try:
@@ -13,8 +13,8 @@ except ImportError or NameError:
     os.system("pip install requests json")
     print("retry!")
 
-#####################################
-##########  Configrations  ##########
+#########################################
+# ==========  CONFIGURATION  ========== #
 DIR = ".server"
 MEMORY = 4
 PORT = 25565
@@ -31,7 +31,7 @@ JAR_ARGS = [
     "--nogui"
 ]
 AUTO_START = True
-##########   STATIC INFO   ##########
+# ==========   STATIC INFO   ========== #
 SERVER_JAR_NAME = "paper-server.jar"
 SERVER_PATH = os.path.join(f"./{DIR}")
 PROPERTIES_AUTO_DOWNLOAD = False
@@ -43,13 +43,13 @@ SERVER_PLUGIN_PATH = os.path.abspath(
     os.path.join(f"./{DIR}/plugins", SERVER_JAR_NAME))
 ALLOW_OVER_RESTART = False
 # DEFAULT_PLUGINS = True
-##########    TODO LIST    ##########
+# ==========   TO DO LI ST   ========== #
 # JVM auto install and using as JAVA_PATH
 # Default Plugins
 # VERY CUTTY KAWAII CAT
-##########  KNOWN  ISSUES  ##########
+# ==========  KNOWN  ISSUES  ========== #
 # WE DON'T HAVE CAT
-#####################################
+#########################################
 
 
 files_for_location_check = ["build.gradle", "build.gradle.kts"]
@@ -70,7 +70,6 @@ for f in files_for_location_check:
                 f"!! The script should be run from the same location as {files_for_location_check}")
         pass
 
-
 print("^----------[ READY SERVER ]----------^")
 # check server dir
 if not os.path.exists(DIR):
@@ -80,9 +79,9 @@ else:
     print(f"Server directory ({DIR}) found - pass")
 
 # check jar
-if not SERVER_JAR_NAME in os.listdir(f"./{DIR}"):
+if SERVER_JAR_NAME not in os.listdir(f"./{DIR}"):
     paper_version_res = requests.get(
-        "https://api.papermc.io/v2/projects/paper/versions/1.19.2/")
+        "https://api.papermc.io/v2/projects/paper/versions/1.19.3/")
 
     # paper sad
     if paper_version_res.status_code != 200:
@@ -93,11 +92,11 @@ if not SERVER_JAR_NAME in os.listdir(f"./{DIR}"):
         paper_build = json.loads(paper_version_res.content)['builds'][-1]
         print(f"Paper Version: {paper_build}")
 
-        print("Donwloading...")
+        print("Downloading...")
 
         with open(SERVER_JAR_PATH, "wb") as file:
             res = requests.get(
-                f"https://api.papermc.io/v2/projects/paper/versions/1.19.2/builds/{paper_build}/downloads/paper-1.19.2-{paper_build}.jar")
+                f"https://api.papermc.io/v2/projects/paper/versions/1.19.3/builds/{paper_build}/downloads/paper-1.19.3-{paper_build}.jar")
             file.write(res.content)
 
         print("Complete!")
@@ -106,9 +105,8 @@ if not SERVER_JAR_NAME in os.listdir(f"./{DIR}"):
 if SERVER_JAR_NAME in os.listdir(f"./{DIR}"):
     print("Paper found")
 
-
 # eula check
-if not "eula.txt" in os.listdir(f"./{DIR}"):
+if "eula.txt" not in os.listdir(f"./{DIR}"):
     try:
         with open(SERVER_EULA_PATH, "r") as file:
             file.readlines()
@@ -123,7 +121,7 @@ if "eula.txt" in os.listdir(f"./{DIR}"):
         if "eula=true" in eula_txt:
             print("eula=true - pass")
         else:
-            yes_words = ["yes", "y", "yeah", "agree", "ye", "ok", "sure", "si"]
+            yes_words = ["yes", "y", "yeah", "agree", "ye", "ok", "sure", "si", "sp", "네", "넹"]
 
             print("^----------[ EULA SECTION ]----------^")
 
@@ -135,7 +133,7 @@ if "eula.txt" in os.listdir(f"./{DIR}"):
                 print("Eula Agreed. Starting Server...")
 
 # properties
-if not "server.properties" in os.listdir(f"./{DIR}"):
+if "server.properties" not in os.listdir(f"./{DIR}"):
     if not PROPERTIES_AUTO_DOWNLOAD:
         pass
     with open(SERVER_PROPERTIES_PATH, "w") as file:
@@ -145,8 +143,9 @@ if not "server.properties" in os.listdir(f"./{DIR}"):
                 "Couldn't find server.properties, tried to download it but failed. Run by default.")
             pass
         file.write(properties.content.decode('utf-8'))
-        
+
         print("server.properties not found. - generated")
+
 
 # start fun
 def start():

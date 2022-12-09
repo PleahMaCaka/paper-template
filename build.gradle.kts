@@ -25,14 +25,14 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    paperDevBundle("1.19.2-R0.1-SNAPSHOT")
+    paperDevBundle("1.19.3-R0.1-SNAPSHOT")
 }
 
 extra.apply {
     set("pluginName", project.name.split('-').joinToString("") { it.capitalize() })
     set("packageName", project.name.replace("-", ""))
     set("kotlinVersion", "1.7.20")
-    set("paperVersion", "1.19.2")
+    set("paperVersion", "1.19.3")
 }
 
 tasks {
