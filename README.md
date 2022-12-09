@@ -2,7 +2,7 @@
 
 ## Getting Started
 
-> ```python
+> ```sh
 > chmod +x ./run.py  
 > ./run.py
 > # Happy Coding :)
