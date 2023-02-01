@@ -151,7 +151,7 @@ if "server.properties" not in os.listdir(f"./{DIR}"):
 def start():
     return os.system(
         f"cd {SERVER_PATH} && "
-        + f"{JAVA_PATH} -Xms{MEMORY}G -Xmx{MEMORY}G "
+        + f"\"{JAVA_PATH}\" -Xms{MEMORY}G -Xmx{MEMORY}G "
         + " ".join(JVM_ARGS)
         + f" -jar {SERVER_JAR_PATH} "
         + " ".join(JAR_ARGS)
