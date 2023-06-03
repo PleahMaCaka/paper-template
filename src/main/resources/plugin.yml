@@ -1,4 +1,7 @@
 name: ExamplePlugin
+author: PaperMC
+description: An example plugin
+website: https://github.com/
 version: '${version}'
 main: example.ExamplePlugin
 api-version: 1.19
