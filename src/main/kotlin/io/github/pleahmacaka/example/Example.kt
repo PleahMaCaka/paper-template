@@ -11,11 +11,12 @@ class Example : JavaPlugin() {
     }
 
     override fun onEnable() {
+        instance = this
         logger.info("Example Plugin Enabled!")
     }
 
     override fun onDisable() {
-
+        logger.info("Example Plugin Disabled!")
     }
 
 }

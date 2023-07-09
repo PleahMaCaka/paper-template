@@ -4,9 +4,8 @@ description: Example plugin for Paper
 website: https://github.com/PleahMaCaka/paper-template
 authors:
   - PleahMaCaka
-
 main: io.github.pleahmacaka.example.Example
 api-version: '1.20'
 libraries:
-  - org.jetbrains.kotlin:kotlin-stdlib:1.9.0-beta
-  - org.jetbrains.kotlin:kotlin-reflect:1.9.0-beta
+  - org.jetbrains.kotlin:kotlin-stdlib:1.9.0
+  - org.jetbrains.kotlin:kotlin-reflect:1.9.0

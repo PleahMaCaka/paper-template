@@ -1,45 +1,34 @@
-plugins {
-    idea
-    java
-    kotlin("jvm") version "1.9.0-Beta"
-}
+val kotlinVersion = "1.9.0"
+val javaVersion = 17
+
+val paperVersion = "1.20.1"
 
 group = "io.github.pleahmacaka"
 version = "0.1.0"
 
-idea {
-    module {
-        excludeDirs.add(file(".server"))
-    }
+plugins {
+    val kotlinVersion = "1.9.0"
+    idea
+    kotlin("jvm") version kotlinVersion
+    id("io.papermc.paperweight.userdev") version "1.5.3"
 }
 
 repositories {
     mavenCentral()
-    maven("papermc-repo") {
-        url = uri("https://repo.papermc.io/repository/maven-public/")
-    }
-    maven("sonatype") {
-        url = uri("https://oss.sonatype.org/content/groups/public/")
-    }
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.20-R0.1-SNAPSHOT")
-    implementation(kotlin("stdlib-jdk8"))
+    implementation(kotlin("stdlib"))
+    implementation(kotlin("reflect"))
+    paperweight.paperDevBundle("$paperVersion-R0.1-SNAPSHOT")
 }
 
-val targetJavaVersion = 17
-kotlin {
-    jvmToolchain(17)
-}
-
-java {
-    val javaVersion = JavaVersion.toVersion(targetJavaVersion)
-    sourceCompatibility = javaVersion
-    targetCompatibility = javaVersion
-    if (JavaVersion.current() < javaVersion) {
-        toolchain.languageVersion.set(JavaLanguageVersion.of(targetJavaVersion))
-    }
+extra.apply {
+    set("pluginName", project.name.split('-').joinToString(""))
+    set("packageName", project.name.replace('-', '.'))
+    set("pluginVersion", version)
+    set("kotlinVersion", kotlinVersion)
+    set("paperVersion", paperVersion)
 }
 
 tasks {
@@ -55,8 +44,8 @@ tasks {
     }
 
     withType<JavaCompile>().configureEach {
-        if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible) {
-            options.release.set(targetJavaVersion)
+        if (javaVersion >= 10 || JavaVersion.current().isJava10Compatible) {
+            options.release.set(javaVersion)
         }
     }
 
@@ -67,5 +56,28 @@ tasks {
         filesMatching("paper-plugin.yml") {
             expand(props)
         }
+    }
+}
+
+idea {
+    module {
+        excludeDirs.add(file(".server"))
+    }
+}
+
+kotlin {
+    jvmToolchain(javaVersion)
+}
+
+java {
+    val javaVersion = JavaVersion.toVersion(javaVersion)
+
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+    if (JavaVersion.current() < javaVersion)
+        toolchain.languageVersion.set(JavaLanguageVersion.of(this@Build_gradle.javaVersion))
+
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
     }
 }
