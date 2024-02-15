@@ -81,7 +81,7 @@ else:
 # check jar
 if SERVER_JAR_NAME not in os.listdir(f"./{DIR}"):
     paper_version_res = requests.get(
-        "https://api.papermc.io/v2/projects/paper/versions/1.20.1/")
+        "https://api.papermc.io/v2/projects/paper/versions/1.20.4/")
 
     # paper sad
     if paper_version_res.status_code != 200:
@@ -96,7 +96,7 @@ if SERVER_JAR_NAME not in os.listdir(f"./{DIR}"):
 
         with open(SERVER_JAR_PATH, "wb") as file:
             res = requests.get(
-                f"https://api.papermc.io/v2/projects/paper/versions/1.20.1/builds/{paper_build}/downloads/paper-1.20.1-{paper_build}.jar")
+                f"https://api.papermc.io/v2/projects/paper/versions/1.20.4/builds/{paper_build}/downloads/paper-1.20.4-{paper_build}.jar")
             file.write(res.content)
 
         print("Complete!")
